@@ -6,6 +6,7 @@ import SearchBar from "../components/SearchBar";
 import SortDropdown from "../components/SortDropdown";
 import Pagination from "../components/Pagination";
 import FilterModal from "../components/FilterModal";
+import Loader from "../components/Loader";
 
 function Dashboard() {
     const [users, setUsers] = useState([]);
@@ -16,12 +17,9 @@ function Dashboard() {
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [showFilter, setShowFilter] = useState(false);
-    const [filters, setFilters] = useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        department: "",
-    });
+    const [filters, setFilters] = useState({ firstName: "", lastName: "", email: "", department: "" });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         fetchUsers();
@@ -37,6 +35,9 @@ function Dashboard() {
 
     const fetchUsers = async () => {
         try {
+            setLoading(true);
+            setError("");
+
             const data = await getUsers();
 
             const formattedUsers = data.map((user, index) => {
@@ -67,8 +68,10 @@ function Dashboard() {
             ).flat();
 
             setUsers(expandedUsers);
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            setError("Failed to fetch users. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -182,6 +185,20 @@ function Dashboard() {
     const endIndex = startIndex + rowsPerPage;
 
     const paginatedUsers = sortedUsers.slice(startIndex, endIndex);
+
+    if (loading) {
+        return <Loader />;
+    }
+
+    if (error) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="bg-red-100 text-red-700 p-6 rounded">
+                    {error}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-100 p-8">
