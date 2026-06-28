@@ -1,4 +1,5 @@
-function UserTable({ users }) {
+function UserTable({ users, onEdit, onDelete }) {
+
     return (
         <div className="overflow-x-auto bg-white rounded-lg shadow">
             <table className="min-w-full border-collapse">
@@ -15,30 +16,31 @@ function UserTable({ users }) {
 
                 <tbody>
                     {users.map((user) => {
-                        const [firstName, ...lastName] = user.name.split(" ");
 
                         return (
                             <tr key={user.id} className="hover:bg-gray-50">
                                 <td className="px-4 py-3 border">{user.id}</td>
 
-                                <td className="px-4 py-3 border">{firstName}</td>
+                                <td className="px-4 py-3 border">{user.firstName}</td>
 
                                 <td className="px-4 py-3 border">
-                                    {lastName.join(" ")}
+                                    {user.lastName}
                                 </td>
 
                                 <td className="px-4 py-3 border">{user.email}</td>
 
                                 <td className="px-4 py-3 border">
-                                    {user.department || "IT"}
+                                    {user.department}
                                 </td>
 
                                 <td className="px-4 py-3 border text-center">
-                                    <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2">
+                                    <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2 cursor-pointer hover:bg-blue-600 transition"
+                                        onClick={() => onEdit(user)}>
                                         Edit
                                     </button>
 
-                                    <button className="bg-red-500 text-white px-3 py-1 rounded">
+                                    <button className="bg-red-500 text-white px-3 py-1 rounded cursor-pointer hover:bg-red-600 transition"
+                                        onClick={() => onDelete(user.id)}>
                                         Delete
                                     </button>
                                 </td>
